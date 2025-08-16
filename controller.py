@@ -164,7 +164,6 @@ def register_vector_control(model, controller):
                 **cross_attention_kwargs,
             )
         
-            y = torch.norm(attn_output, dim=2, keepdim=True) 
     
             if self.norm_type == "ada_norm_zero":
                 attn_output = gate_msa.unsqueeze(1) * attn_output
@@ -208,8 +207,6 @@ def register_vector_control(model, controller):
                 
                 attn_output = controller(attn_output, place_in_unet)
                 # -------------------------------
-                if controller.cur_att_layer in list(range(24, 35)):
-                    attn_output = attn_output*0
                 hidden_states = attn_output + hidden_states
 
             # 4. Feed-forward
@@ -239,19 +236,6 @@ def register_vector_control(model, controller):
             hidden_states = ff_output + hidden_states
             if hidden_states.ndim == 4:
                 hidden_states = hidden_states.squeeze(1)
-                
-                
-            print(controller.cur_att_layer-1)
-            x = torch.norm(attn_output, dim=2, keepdim=True) / torch.norm(hidden_states, dim=2, keepdim=True)
-            print('CA', place_in_unet, x.mean().item())
-            
-            x = y / torch.norm(hidden_states, dim=2, keepdim=True)
-            print('SA',place_in_unet, x.mean().item())
-            
-            x = torch.norm(ff_output, dim=2, keepdim=True) / torch.norm(hidden_states, dim=2, keepdim=True)
-            print('FF',place_in_unet, x.mean().item())
-            
-            print()
 
             return hidden_states
 
