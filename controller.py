@@ -92,7 +92,7 @@ class VectorStore(VectorControl):
                     vector = vector - (self.beta*sim)*steering_vector.expand(1, vector.size()[1], -1)
                 else:
                     # steer forward, i.e. add a steering vector x multiplied by self.intensity
-                    vector = self.alpha*steering_vector.expand(1, vector.size()[1], -1)
+                    vector = vector + self.alpha*steering_vector.expand(1, vector.size()[1], -1)
                 
                 
                 # renormalize so that the norm of the steered vector is the same as of original one
