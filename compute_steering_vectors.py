@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 from PIL import Image
 from collections import defaultdict
+from tqdm import tqdm
 
 import torch
 from diffusers import StableDiffusionPipeline, DiffusionPipeline, AutoPipelineForText2Image
@@ -20,6 +21,8 @@ parser.add_argument('--num_denoising_steps', type=int, default=50) # 50 for sd14
 parser.add_argument('--concept_pos', type=str, default="anime")
 parser.add_argument('--concept_neg', type=str, default=None)
 parser.add_argument('--save_dir', type=str, default='steering_vectors') # path to saving steering vectors
+parser.add_argument('--num_train_prompts', type=int, default=50) # number of training prompts
+
 args = parser.parse_args()
 
 
@@ -98,7 +101,12 @@ pos_vectors = []
 neg_vectors = []
 seed=0
 
-for i, (prompt_pos, prompt_neg) in enumerate(zip(prompts_pos, prompts_neg)):
+print("Number of training prompts: ", len(prompts_pos)) 
+print("Using only", args.num_train_prompts, "prompts for training")
+prompts_pos = prompts_pos[:args.num_train_prompts]
+prompts_neg = prompts_neg[:args.num_train_prompts]
+
+for i, (prompt_pos, prompt_neg) in tqdm(enumerate(zip(prompts_pos, prompts_neg)), total=len(prompts_pos)):
     print('Prompt pair number', i, 'out of', len(prompts_pos))
     print('Positive prompt:', prompt_pos)
     print('Negative prompt', prompt_neg)
