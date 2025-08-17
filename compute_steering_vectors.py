@@ -61,8 +61,10 @@ elif args.model == 'sdxl-turbo':
          variant="fp16",
          cache_dir='./cache'
      ) 
-        
-        
+
+# disable progress bar in generation
+pipe.set_progress_bar_config(disable=True)
+     
 def run_model(model_type, pipe, prompt, seed, num_denoising_steps):
     if args.model in ['sd14', 'sd21', 'sdxl']:
         image = pipe(prompt=prompt, 
