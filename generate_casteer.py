@@ -53,7 +53,8 @@ elif args.model == 'sdxl':
         torch_dtype=torch.float16, 
         use_safetensors=True, 
         variant="fp16",
-         cache_dir='./cache'
+         cache_dir='./cache',
+         generator=torch.Generator("cuda").manual_seed(0),
     )
 elif args.model == 'sdxl-turbo':
      pipe = AutoPipelineForText2Image.from_pretrained(
@@ -94,7 +95,7 @@ if args.not_steer:
     
     image.save(os.path.join(args.save_dir, "orig_{}_{}.png".format(args.prompt, args.seed)))
     
-    
+
 else:
     with open(args.steering_vectors, 'rb') as handle:
         steering_vectors = pickle.load(handle)
